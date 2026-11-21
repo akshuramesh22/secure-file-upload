@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SecureVault</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='app.js') }}" defer></script></head><body>
+<nav><span class="brand">🛡️ SecureVault</span>
+{% if session.uid %}<form action="{{ url_for('logout') }}" method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ghost">Log out</button></form>{% endif %}</nav>
+<div class="toasts">{% for m in get_flashed_messages() %}<div class="toast">{{ m }}</div>{% endfor %}</div>
+<div class="wrap">{% block body %}{% endblock %}</div></body></html>

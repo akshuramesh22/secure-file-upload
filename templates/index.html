@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block body %}
+<div class="card stats">
+<div class="stat"><b>{{ files|length }}</b><span>Files stored</span></div>
+<div class="stat"><b>{{ '%.2f'|format((files|sum(attribute='size'))/1048576) }} MB</b><span>Space used</span></div>
+<div class="stat"><b>🔒 Private</b><span>Only you can access</span></div></div>
+<div class="card"><form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div id="dropzone"><div class="ico">☁️</div><p><b>Drag and drop a file here</b><br>or click to browse</p>
+<small>Allowed: {{ allowed }} · max 5 MB</small></div>
+<input type="file" id="file" name="file" hidden>
+<div id="fname"></div><button id="upbtn" class="full" disabled>Upload securely</button></form></div>
+<div class="card"><div class="row"><h3 style="margin:0">Your files</h3>
+<input type="search" id="search" placeholder="Search files..." style="max-width:240px"></div>
+{% for f in files %}<div class="file" data-name="{{ f.original_name|lower }}">
+<div class="ico">{{ '📄' if f.original_name.endswith('.pdf') else '🖼️' }}</div>
+<div class="info"><div class="name">{{ f.original_name }}</div>
+<small>{{ '%.1f'|format(f.size/1024) }} KB · {{ f.uploaded_at }} UTC · SHA-256 {{ f.sha256[:10] }}…</small></div>
+<a class="btn" href="{{ url_for('download', fid=f.id) }}">⬇ Download</a>
+<form class="del" action="{{ url_for('delete', fid=f.id) }}" method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger">🗑</button></form></div>
+{% else %}<div class="empty">No files yet. Upload your first one above ☝️</div>{% endfor %}</div>
+{% endblock %}
